@@ -112,7 +112,7 @@ class IndexController extends Zend_Controller_Action
 
             // request user info with a simple get request
             $client = new Zend_Http_Client();
-            $client->setUri($authentiqOauth2Config->oauthEndpoint . $authentiqOauth2Config->userInfo);
+            $client->setUri($authentiqOauth2Config->oauthEndpoint . $authentiqOauth2Config->userInfoUri);
             $client->setConfig(array(
                 'maxredirects' => 0,
                 'timeout' => 30));
