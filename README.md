@@ -200,21 +200,21 @@ apache vhost.conf
 </VirtualHost>
 ```
 
-3) Create an Authentiq API account, then create a configuration file and add the values:
+3) Create a configuration file with the following content (used only for localhost, you need an account to implement it for a domain):
 
 ```
 ; application/configs/authentiq_api.ini
 
 ; authentiq api configuration
-oauthEndpoint = https://connect.authentiq.io/
-dialogEndpoint = https://connect.authentiq.io/
-clientId = examples-flask-basic
+oauthEndpoint = https://connect.authentiq.io
+dialogEndpoint = https://connect.authentiq.io
+clientId = examples-zend-v1-oauth
 clientSecret = ed25519
 callbackUrl = http://localhost:8000/authorized
 accessTokenUri = /token
-requestedRights = email
+; requestedRights = aq:name~r email phone aq:push
 responseType = code
 grantType = authorization_code
 oauthDialogUri = /authorize
-userInfo = userinfo
+userInfoUri = /userinfo
 ```
