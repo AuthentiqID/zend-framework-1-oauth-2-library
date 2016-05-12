@@ -10,65 +10,10 @@ Examples:
 
 Zend Framework 1 OAuth 2 examples.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Facebook Open Graph API OAuth 2
 -------------------------------
 
-1) Add the latest "Zend" Framework linrary and the "Chrisweb" library to the library directory
+1) Add the latest "Zend" Framework library and the "Chrisweb" library to the library directory
 
 2) Setup an Apache vhost for the example:
 
@@ -97,10 +42,7 @@ apache vhost.conf
 
 127.0.0.1 www.facebookopengraphoauth2.test
 
-
 3.1) or just use the localhost IP to access the example(s)
-
-
 
 http://127.0.0.1
 
@@ -161,10 +103,7 @@ apache vhost.conf
 
 127.0.0.1 www.googleplusoauth2.test
 
-
 3.1) or just use the localhost IP to access the example(s)
-
-
 
 http://127.0.0.1
 
@@ -193,32 +132,23 @@ stateSecret = SOME_SECRET ; change this with own values, change the secret every
 requestedRights = https://www.googleapis.com/auth/plus.login,https://www.googleapis.com/auth/plus.me,https://www.googleapis.com/auth/userinfo.email
 ```
 
-
-
 Jamendo API OAuth 2
 -------------------
 
 1) Add the latest Zend Framework and the Chrisweb library to the library directory.
-
 
 2) Setup an Apache vhost for the example:
 
 apache vhost.conf
 
 ```
-
 <VirtualHost *:80>
-
-
-
 
     ServerName www.jamendoapioauth2.test
     DocumentRoot /path/to/examples/JamendoApiOAuth2/public
     ErrorLog "logs/jamendoapioauth2-error.log"
     CustomLog "logs/jamendoapioauth2-access.log" combined
     SetEnv APPLICATION_ENV "development"
-
-
 
     <Directory /path/to/examples/JamendoApiOAuth2/public>
         DirectoryIndex index.php
@@ -227,10 +157,8 @@ apache vhost.conf
         Allow from all
     </Directory>
 
-
 </VirtualHost>
 ```
-
 
 3) (optional) Update your hosts file:
 
@@ -240,19 +168,14 @@ apache vhost.conf
 
 http://127.0.0.1
 
-4) Create a Jamendi API account at https://developer.jamendo.com/v3.0
+4) Create a Jamendo API account at https://developer.jamendo.com/v3.0
 
 5) Finally go into "/examples/JamendoApiOAuth2/application/configs/" and rename the file "jamendo_api_EXAMPLE.ini" to "jamendo_api.ini" and add your own values where needed
 
 5.1) Or if you prefer you can also create a new configuration file named "jamendo_api.ini" in "/examples/JamendoApiOAuth2/application/configs/" and add the following values:
 
 ```
-
 ; documentation: https://developer.jamendo.com/v3.0/authentication#oauth2-authorize-request
-
-
-
-
 
 ; jamendo api configuration
 dialogEndpoint = https://api.jamendo.com/v3.0
@@ -260,19 +183,13 @@ oauthEndpoint = https://api.jamendo.com/v3.0
 clientId = 0000000000 ; change this with own values
 clientSecret = 0000000000000000000000000000 ; change this with own values
 callbackUrl = http://www.jamendoapioauth2.test/jamendocallback
-
-
-
 oauthDialogUri = /oauth/authorize
 accessTokenUri = /oauth/grant
 stateSecret = SOME_SECRET ; change this with own values, change the secret every time you think it could have been compromised, it is used to ensure the OAuth requests really come from your app
 grantType = authorization_code
-
-
 requestedRights = music ; = scope
 responseType = code ; = response_type
 ```
-
 
 Authentiq API OAuth 2
 -------------------------------
@@ -306,7 +223,8 @@ apache vhost.conf
 http://127.0.0.1 or localhost
 
 4) Finally got into "examples/AuthentiqOAuth2/application/configs/" and rename the "authentiq_api_EXAMPLE.ini" to "authentiq_api.ini" and add your own values where needed
-4.1) Or if  you prefer, you an also create a new configuration file named "authentiq_api.ini" with the following content in "examples/AuthentiqOAuth2/application/configs/" (used only for localhost, you need an account to implement it for a domain):
+
+    4.1) Or if  you prefer, you an also create a new configuration file named "authentiq_api.ini" with the following content in "examples/AuthentiqOAuth2/application/configs/" (used only for localhost, you need an account to implement it for a domain):
 
 
 ```
@@ -328,7 +246,6 @@ grantType = authorization_code
 userInfoUri = /userinfo
 
 ```
-
 
 OAuth 2.0 protocol specification:
 =================================

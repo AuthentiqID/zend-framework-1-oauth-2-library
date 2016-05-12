@@ -130,20 +130,24 @@ class Chrisweb_Oauth2
             $scope = $requestedRights;
         }
 
-        // construct request url with required values
-        if (substr($dialogEndpoint, -1) == '/') $dialogEndpoint = substr($dialogEndpoint, 0, strlen($dialogEndpoint)-1);
-        $requestUrl = $dialogEndpoint.$dialogUri.'?client_id='.$clientId.'&redirect_uri='.$callbackUrl;
+        // construct request url and its parameters with required values
+        if (substr($dialogEndpoint, -1) == '/') $dialogEndpoint = substr($dialogEndpoint, 0, strlen($dialogEndpoint) - 1);
+
+        $baseUrl = $dialogEndpoint . $dialogUri;
+
+        // Build array of parameters
+        $baseUrlParams = array('client_id' => $clientId, 'redirect_uri' => $callbackUrl);
 
         // add optional values to request url
-        if (!empty($responseType)) $requestUrl .= '&response_type='.$responseType;
-        if (!empty($scope)) $requestUrl .= '&scope='.$scope;
-        if (!empty($state)) $requestUrl .= '&state='.$state;
-        if (!empty($immediate)) $requestUrl .= '&immediate='.$immediate;
+        if (!empty($responseType)) $baseUrlParams['response_type'] = $responseType;
+        if (!empty($scope)) $baseUrlParams['scope'] = $scope;
+        if (!empty($state)) $baseUrlParams['state'] = $state;
+        if (!empty($immediate)) $baseUrlParams['immediate'] = $immediate;
 
-        //Zend_Debug::dump($requestUrl);
-        //exit;
+        $baseUrlParams = http_build_query($baseUrlParams, null, '&', PHP_QUERY_RFC3986);
+        $finalUrl = $baseUrl.'?'.$baseUrlParams;
 
-        header('Location: '.$requestUrl);
+        header('Location: ' . $finalUrl);
         exit(1);
 
     }
@@ -279,7 +283,7 @@ class Chrisweb_Oauth2
      * @return array
      * @throws Chrisweb_Oauth2_Exception
      */
-    public function requestAccessToken($verificationCode = null, $oauthEndpoint = null, $callbackUrl = null, $clientId = null, $clientSecret = null, $grantType = null, $accessTokenUri = null)
+    public function requestAccessToken($verificationCode = null, $oauthEndpoint = null, $callbackUrl = null, $clientId = null, $clientSecret = null, $grantType = null, $accessTokenUri = null, $username = null, $password = null)
     {
         if (is_null($verificationCode)) $verificationCode = $this->getVerificationCode();
         if (is_null($oauthEndpoint)) $oauthEndpoint = $this->_config->getOauthEndpoint();
@@ -290,7 +294,38 @@ class Chrisweb_Oauth2
         if (is_null(self::$_localHttpClient)) $this->setLocalHttpClient($this->getLocalHttpClient());
         if (is_null($accessTokenUri)) $accessTokenUri = $this->_config->getAccessTokenUri();
 
-        $requiredValuesArray = array('verificationCode', 'clientId', 'clientSecret', 'callbackUrl', 'accessTokenUri', 'oauthEndpoint');
+        if (empty($grantType)) {
+            $grantType = 'authorization_code';
+        }
+
+        $requiredValuesArray = array('clientId', 'clientSecret', 'callbackUrl', 'accessTokenUri', 'oauthEndpoint');
+        $postParametersArray = array(
+            'client_id'   => $clientId,
+            'client_secret' => $clientSecret,
+            'grant_type' => $grantType,
+            'redirect_uri' => $callbackUrl
+        );
+
+        switch ($grantType) {
+            case 'authorization_code':
+                array_push($requiredValuesArray, 'verificationCode');
+                $postParametersArray['code'] = $verificationCode;
+                break;
+            case 'refresh_token':
+                array_push($requiredValuesArray, 'verificationCode');
+                $postParametersArray['refresh_token'] = $verificationCode;
+                break;
+            case 'password':
+                array_push($requiredValuesArray, 'username', 'password');
+                $postParametersArray['username'] = $username;
+                $postParametersArray['password'] = $password;
+                break;
+            case 'client_credentials':
+                break;
+            default:
+                require_once 'Chrisweb/Oauth2/Exception.php';
+                throw new Chrisweb_Oauth2_Exception(sprintf('Unknown grant type: "%s"', $grantType));
+        }
 
         // throw exception if one of the required values is missing
         foreach($requiredValuesArray as $requiredValue) {
@@ -302,17 +337,6 @@ class Chrisweb_Oauth2
 
         if (substr($oauthEndpoint, -1) == '/') $oauthEndpoint = substr($oauthEndpoint, 0, strlen($oauthEndpoint)-1);
         
-        $postParametersArray = array(
-            'client_id'   => $clientId,
-            'client_secret' => $clientSecret,
-            'code' => $verificationCode,
-            'redirect_uri' => $callbackUrl
-        );
-
-        if (!empty($grantType) && !is_null($grantType)) {
-            $postParametersArray['grant_type'] = $grantType;
-        }
-
         self::$_localHttpClient ->resetParameters()
                                 ->setHeaders('Accept-Charset', 'ISO-8859-1,utf-8')
                                 ->setUri($oauthEndpoint.$accessTokenUri)
